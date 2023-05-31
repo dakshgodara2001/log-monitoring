@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+   <head><title>Log Monitoring</title></head>
+   <script src="/socket.io/socket.io.js"></script>
+   <script>
+      var socket = io("ws://localhost:3000");
+      socket.on('update-log', function(data){
+          console.log(data);
+          for(line of data) document.getElementById('logslist').innerHTML +='<p>' + line + '</br><p>';
+      });
+      socket.on('init',function(data){
+        console.log(data);
+        for(line of data) document.getElementById('logslist').innerHTML +='<p>' + line + '</br><p>';});
+   </script>
+   <body>
+       <h1>Log monitoring </h1>
+      <div id="logslist"></div>
+      </body>
+   </html>
