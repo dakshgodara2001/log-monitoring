@@ -1,45 +1,56 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
-const path = require('path'); 
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
+const path = require("path");
 
-const Watcher = require('./watcher');
+const Watcher = require("./watcher");
 
-
-
- 
-let watcher = new Watcher("sample.log");
+const watcher = new Watcher("sample.log");
 
 watcher.start();
 
-
-app.get('/log', (req, res) => {
-    console.log("request received");
-    var options = {
-        root: path.join(__dirname)
-    };
-     
-    var fileName = 'index.html';
-    res.sendFile(fileName, options, function (err) {
-        if (err) {
-            next(err);
-        } else {
-            console.log('Sent:', fileName);
-        }
-    });
-})
-
-io.on('connection', function(socket){
-    console.log("new connection established:"+socket.id);
-
-      watcher.on("process", function process(data) {
-        socket.emit("update-log",data);
-      });
-      let data = watcher.getLogs();
-      socket.emit("init",data);
-   });
-
-http.listen(3000, function(){
-    console.log('listening on localhost:3000');
+watcher.on("process", (data) => {
+  io.emit("update-log", data);
 });
+
+watcher.on("error", (err) => {
+  console.error("Watcher error:", err);
+});
+
+app.get("/log", (req, res, next) => {
+  console.log("request received");
+  const options = {
+    root: path.join(__dirname),
+  };
+
+  const fileName = "index.html";
+  res.sendFile(fileName, options, (err) => {
+    if (err) {
+      next(err);
+    } else {
+      console.log("Sent:", fileName);
+    }
+  });
+});
+
+io.on("connection", (socket) => {
+  console.log("new connection established:" + socket.id);
+  const data = watcher.getLogs();
+  socket.emit("init", data);
+});
+
+http.listen(3000, () => {
+  console.log("listening on localhost:3000");
+});
+
+function shutdown() {
+  console.log("\nShutting down...");
+  watcher.stop();
+  http.close(() => {
+    process.exit(0);
+  });
+}
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);

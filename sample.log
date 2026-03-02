@@ -1,24 +1,10 @@
-request received
-Sent: index.html
-new connection established:PYQAVGK3IJxJ_tEcAAAX
-request received
-Sent: index.html
-new connection established:p-SC5fFX3nEGLnifAAAZ
-request received
-Sent: index.html
-new connection established:mD-v9FRS4TyoMazrAAAb
-request received
-Sent: index.html
-new connection established:gKlYbctfzMtOwm5FAAAd
-request received
-Sent: index.html
-new connection established:mdJLgSbuzJApJrTXAAAl
-request received
-Sent: index.html
-new connection established:to4ruzkARPdtE7dWAAAn
-request received
-Sent: index.html
-new connection established:d5AXZIXkB72IIz2nAAAp
-request received
-Sent: index.html
-new connection established:yiS9lpohq086-vxLAAAr
+2026-03-03T01:00:00Z [INFO] Application started
+2026-03-03T01:00:01Z [INFO] Server listening on port 8080
+2026-03-03T01:00:05Z [INFO] Database connection established
+2026-03-03T01:00:10Z [WARN] High memory usage detected: 85%
+2026-03-03T01:00:15Z [INFO] Request processed: GET /api/users (200)
+2026-03-03T01:00:20Z [ERROR] Failed to fetch resource: timeout after 5000ms
+2026-03-03T01:00:25Z [INFO] Request processed: POST /api/login (200)
+2026-03-03T01:00:30Z [INFO] Cache refreshed: 142 entries
+2026-03-03T01:00:35Z [WARN] Slow query detected: 1200ms
+2026-03-03T01:00:40Z [INFO] Health check passed

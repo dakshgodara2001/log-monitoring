@@ -1,19 +1,81 @@
 <!DOCTYPE html>
 <html>
-   <head><title>Log Monitoring</title></head>
-   <script src="/socket.io/socket.io.js"></script>
-   <script>
-      var socket = io("ws://localhost:3000");
-      socket.on('update-log', function(data){
-          console.log(data);
-          for(line of data) document.getElementById('logslist').innerHTML +='<p>' + line + '</br><p>';
+  <head>
+    <title>Log Monitoring</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        background: #1e1e1e;
+        color: #d4d4d4;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 14px;
+        padding: 20px;
+      }
+      h1 {
+        color: #569cd6;
+        margin-bottom: 16px;
+        font-size: 20px;
+      }
+      #status {
+        padding: 6px 12px;
+        margin-bottom: 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        display: inline-block;
+      }
+      #status.connected { background: #2d5a2d; color: #6a9955; }
+      #status.disconnected { background: #5a2d2d; color: #d16969; }
+      #logslist {
+        background: #111;
+        border: 1px solid #333;
+        border-radius: 4px;
+        padding: 12px;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+      #logslist p {
+        padding: 2px 0;
+        border-bottom: 1px solid #222;
+        word-wrap: break-word;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Log Monitoring</h1>
+    <div id="status" class="disconnected">Disconnected</div>
+    <div id="logslist"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const logslist = document.getElementById("logslist");
+      const status = document.getElementById("status");
+
+      function appendLine(line) {
+        const p = document.createElement("p");
+        p.textContent = line;
+        logslist.appendChild(p);
+        logslist.scrollTop = logslist.scrollHeight;
+      }
+
+      socket.on("connect", () => {
+        status.textContent = "Connected";
+        status.className = "connected";
       });
-      socket.on('init',function(data){
-        console.log(data);
-        for(line of data) document.getElementById('logslist').innerHTML +='<p>' + line + '</br><p>';});
-   </script>
-   <body>
-       <h1>Log monitoring </h1>
-      <div id="logslist"></div>
-      </body>
-   </html>
+
+      socket.on("disconnect", () => {
+        status.textContent = "Disconnected";
+        status.className = "disconnected";
+      });
+
+      socket.on("init", (data) => {
+        logslist.innerHTML = "";
+        data.forEach(appendLine);
+      });
+
+      socket.on("update-log", (data) => {
+        data.forEach(appendLine);
+      });
+    </script>
+  </body>
+</html>
